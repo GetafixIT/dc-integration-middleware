@@ -77,7 +77,7 @@ const maskSensitiveData = (obj: any) => {
 export const getCodec = async (config: any, type: CodecTypes): Promise<API> => {
 	const codecs = getCodecs(type)
 	let codec: CodecType
-    
+
 	if ('vendor' in config) {
 		const vendorCodec = codecs.find(codec => codec.vendor === config.vendor)
 		if (!vendorCodec) {
@@ -144,6 +144,9 @@ registerCodec(new BigCommerceCorsCommerceCodecType())
 
 import ShopifyCommerceCodecType from './codecs/commerce/shopify'
 registerCodec(new ShopifyCommerceCodecType())
+
+import SalesforceD2CCommerceCodecType from './codecs/commerce/salesforce-d2c'
+registerCodec(new SalesforceD2CCommerceCodecType())
 
 // Re-export common codec functions.
 export * from './codecs/common'

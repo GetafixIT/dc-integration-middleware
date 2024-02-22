@@ -63,7 +63,7 @@ export function getPageByQuery(offsetQuery: string, countQuery: string, totalPro
 	const totalPropMap = getPropMapper(totalProp)
 	const resultPropMap = getPropMapper(resultProp)
 
-	return <T>(client: OAuthRestClientInterface, url: string, params: any = {}) => 
+	return <T>(client: OAuthRestClientInterface, url: string, params: any = {}) =>
 		async (page: number, pageSize: number): Promise<GetPageResult<T>> => {
 			const allParams = {
 				...params,
@@ -97,14 +97,15 @@ export function getPageByQuery(offsetQuery: string, countQuery: string, totalPro
  * @param countQuery Query key to use for page size
  * @param totalProp Property to extract total assets from
  * @param resultProp Property to extract result items from
+ * @param method Property controls the request method
  * @param offsetFunc Function for getting the offset from the page number and size
  * @returns A generator that takes a client, url and base params and generates a function that gets a page.
  */
-export function getPageByQueryAxios(offsetQuery: string, countQuery: string, totalProp: StringPropMapper, resultProp: StringPropMapper, offsetFunc?: (page: number, pageSize: number) => number) {
+export function getPageByQueryAxios(offsetQuery: string, countQuery: string, totalProp: StringPropMapper, resultProp: StringPropMapper, method = 'get', offsetFunc?: (page: number, pageSize: number) => number) {
 	const totalPropMap = getPropMapper(totalProp)
 	const resultPropMap = getPropMapper(resultProp)
 
-	return <T>(axios: AxiosStatic, url: string, config: AxiosRequestConfig<any>, params: any = {}) => 
+	return <T>(axios: AxiosStatic, url: string, config: AxiosRequestConfig<any>, params: any = {}) =>
 		async (page: number, pageSize: number): Promise<GetPageResult<T>> => {
 			const allParams = {
 				...params,
@@ -114,9 +115,9 @@ export function getPageByQueryAxios(offsetQuery: string, countQuery: string, tot
 
 			const newUrl = applyParams(url, allParams)
 
-			const response = await axios.get(newUrl, config)
+			const response = await axios({url: newUrl, method, ...config})
 
-			logResponse('get', newUrl, response.data)
+			logResponse(method, newUrl, response.data)
 
 			return {
 				data: resultPropMap(response.data) ?? [],
@@ -184,7 +185,7 @@ export const paginate = async <T>(
 	for (let i = 0; i < pageCount; i++) {
 		const {data, total} = await requestPage(pageNum + i, pageSize)
 		finalTotal = total
-		
+
 		// There's a possibility that the implementation has returned more than one page.
 		// Allow multiple pages to be completed at a time.
 		const pagesReturned = Math.floor(data.length / pageSize)
@@ -369,7 +370,7 @@ export function getPageGql<T, T2>(gqlRequest: GqlRequestMethod, query: string, v
 
 		if (paginated.edges.length > pageSize) {
 			paginated.edges = paginated.edges.slice(0, pageSize)
-			
+
 			return {
 				data: paginated.edges.map(edge => edge.node),
 				nextCursor: paginated.edges[paginated.edges.length - 1].cursor,

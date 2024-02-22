@@ -48,7 +48,7 @@ export class BigCommerceCommerceCodecType extends CommerceCodecType {
 	}
 
 	/**
-	 * @inheritdoc 
+	 * @inheritdoc
 	 */
 	async getApi(config: CodecPropertyConfig<CodecConfig>): Promise<CommerceAPI> {
 		return await new BigCommerceCommerceCodec(config).init(this)
@@ -61,7 +61,7 @@ export class BigCommerceCommerceCodecType extends CommerceCodecType {
 export class BigCommerceCommerceCodec extends CommerceCodec {
 	declare config: CodecPropertyConfig<CodecConfig>
 
-	getPage = getPageByQueryAxios('page', 'limit', (data) => data.meta.pagination.total, 'data', (page) => page + 1)
+	getPage = getPageByQueryAxios('page', 'limit', (data) => data.meta.pagination.total, 'data', 'get', (page) => page + 1)
 
 	/**
 	 * @inheritdoc
@@ -133,7 +133,7 @@ export class BigCommerceCommerceCodec extends CommerceCodec {
 	}
 
 	/**
-	 * @inheritdoc 
+	 * @inheritdoc
 	 */
 	async getCustomerGroups(args: CommonArgs): Promise<Identifiable[]> {
 		return (await this.fetch('/v2/customer_groups')).map(mapCustomerGroup)

@@ -51,7 +51,7 @@ export class BigCommerceCorsCommerceCodecType extends CommerceCodecType {
 	}
 
 	/**
-	 * @inheritdoc 
+	 * @inheritdoc
 	 */
 	async getApi(config: CodecPropertyConfig<CodecConfig>): Promise<CommerceAPI> {
 		return await new BigCommerceCorsCommerceCodec(config).init(this)
@@ -66,7 +66,7 @@ export class BigCommerceCorsCommerceCodec extends CommerceCodec {
 
 	apiClient: AxiosInstance
 
-	getPage = getPageByQueryAxios('page', 'limit', (data) => data.meta.pagination.total, 'data', (page) => page + 1)
+	getPage = getPageByQueryAxios('page', 'limit', (data) => data.meta.pagination.total, 'data', 'get', (page) => page + 1)
 
 	/**
 	 * @inheritdoc
@@ -143,7 +143,7 @@ export class BigCommerceCorsCommerceCodec extends CommerceCodec {
 		} else if (args.productIds) {
 			const ids = args.productIds.split(',')
 			const response = await this.gqlRequest<BigCommerceProductIdsResponse>(
-				raw ? productsByIds : productsByIdsMin, 
+				raw ? productsByIds : productsByIdsMin,
 				{ ids: ids.map(id => Number(id)), currencyCode: args.currency || 'USD' })
 
 			products = this.mapIdentifiers(ids, response.site.products.edges.map(edge => edge.node))
@@ -157,7 +157,7 @@ export class BigCommerceCorsCommerceCodec extends CommerceCodec {
 					response => response.site.search.searchProducts.products),
 				args,
 				PAGE_SIZE)
-	
+
 			return bcProducts.data
 		} else if (args.category && args.category.id === '') {
 			products = paginateBlankArgs(args)
@@ -170,7 +170,7 @@ export class BigCommerceCorsCommerceCodec extends CommerceCodec {
 					response => response.site.category.products),
 				args,
 				PAGE_SIZE)
-	
+
 			return bcProducts.data
 		} else {
 			throw getProductsArgError(method)
@@ -179,7 +179,7 @@ export class BigCommerceCorsCommerceCodec extends CommerceCodec {
 	}
 
 	/**
-	 * @inheritdoc 
+	 * @inheritdoc
 	 */
 	async getCustomerGroups(args: CommonArgs): Promise<Identifiable[]> {
 		return []
