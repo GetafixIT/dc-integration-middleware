@@ -129,7 +129,9 @@ export class RestCommerceCodec extends CommerceCodec {
 			const ids = args.productIds.split(',')
 			return mapIdentifiers(ids, this.products.filter(prod => ids.includes(prod.id)))
 		} else if (args.keyword) {
-			return paginateArgs(getListPage(this.products.filter(prod => prod.title.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1)), args)
+			return paginateArgs(getListPage(this.products.filter(prod => {
+				return prod.title.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1 || prod.id.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
+			})), args)
 		} else if (args.category) {
 			return paginateArgs(getListPage([
 				..._.filter(this.products, prod => _.includes(_.map(prod.categories, 'id'), args.category.id))
