@@ -32,7 +32,7 @@ type CodecConfig = {
  * @param defaultValue Default value if URL is empty
  * @returns Response data
  */
-const fetchFromURL = async (url: string, defaultValue: any) => _.isEmpty(url) ? defaultValue : await catchAxiosErrors(async () => (await axios.get(url)).data)
+const fetchFromURL = async (url: string, defaultValue: any) => _.isEmpty(url) ? defaultValue : await catchAxiosErrors(async () => (await axios.get(url))?.data)
 
 /**
  * Commerce Codec Type that integrates with REST.
@@ -82,6 +82,21 @@ export class RestCommerceCodecType extends CommerceCodecType {
 	}
 }
 
+const mapJLData = (product) => {
+	const images = [{url: `https:${product.images.primary}`}]
+	return (
+		{
+			...product,
+			name: product.title,
+			variants: [...product.parentProduct.variants.map((variant) => ({
+				...variant,
+				images
+			}))],
+			selectedVariant: {...product, images}
+		}
+	)
+}
+
 /**
  * Commerce Codec that integrates with REST.
  */
@@ -108,7 +123,7 @@ export class RestCommerceCodec extends CommerceCodec {
 	 */
 	async cacheCategoryTree(): Promise<void> {
 		this.categories = await fetchFromURL(this.config.categoryURL, [])
-		this.products = await fetchFromURL(this.config.productURL, [])
+		this.products = (await fetchFromURL(this.config.productURL, [])).map(mapJLData)
 		this.customerGroups = await fetchFromURL(this.config.customerGroupURL, [])
 		this.translations = await fetchFromURL(this.config.translationsURL, {})
 		this.categoryTree = this.categories.filter(cat => !cat.parent)
@@ -130,7 +145,7 @@ export class RestCommerceCodec extends CommerceCodec {
 			return mapIdentifiers(ids, this.products.filter(prod => ids.includes(prod.id)))
 		} else if (args.keyword) {
 			return paginateArgs(getListPage(this.products.filter(prod => {
-				return prod.title.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1 || prod.id.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
+				return prod.name.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1 || prod.id.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
 			})), args)
 		} else if (args.category) {
 			return paginateArgs(getListPage([

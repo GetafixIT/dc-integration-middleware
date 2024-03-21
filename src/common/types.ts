@@ -26,8 +26,7 @@ export type CustomerGroup = Identifiable & {}
  * Commerce Object with a slug
  */
 export type CommerceObject = Identifiable & {
-	slug: string;
-	title: string;
+	slug: string
 }
 
 /**
