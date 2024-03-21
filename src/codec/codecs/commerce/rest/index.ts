@@ -112,7 +112,7 @@ export class RestCommerceCodec extends CommerceCodec {
 		this.customerGroups = await fetchFromURL(this.config.customerGroupURL, [])
 		this.translations = await fetchFromURL(this.config.translationsURL, {})
 		this.categoryTree = this.categories.filter(cat => !cat.parent)
-		
+
 		this.updateCategoriesVersion(this.categories)
 	}
 
@@ -120,6 +120,7 @@ export class RestCommerceCodec extends CommerceCodec {
 	 * @inheritdoc
 	 */
 	async getProducts(args: GetProductsArgs, raw = false): Promise<Product[]> {
+
 		await this.ensureCategoryTree()
 
 		if (args.productIds && args.productIds === '') {
@@ -128,7 +129,7 @@ export class RestCommerceCodec extends CommerceCodec {
 			const ids = args.productIds.split(',')
 			return mapIdentifiers(ids, this.products.filter(prod => ids.includes(prod.id)))
 		} else if (args.keyword) {
-			return paginateArgs(getListPage(this.products.filter(prod => prod.name.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1)), args)
+			return paginateArgs(getListPage(this.products.filter(prod => prod.title.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1)), args)
 		} else if (args.category) {
 			return paginateArgs(getListPage([
 				..._.filter(this.products, prod => _.includes(_.map(prod.categories, 'id'), args.category.id))
