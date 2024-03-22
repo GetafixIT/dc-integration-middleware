@@ -87,12 +87,14 @@ const mapJLData = (product) => {
 	return (
 		{
 			...product,
+			sku: product.aliases.skuId,
 			name: product.title,
 			variants: [...product.parentProduct.variants.map((variant) => ({
 				...variant,
+				sku: variant?.aliases?.skuId,
 				images
 			}))],
-			selectedVariant: {...product, images}
+			selectedVariant: {...product, sku: product?.aliases?.skuId, images}
 		}
 	)
 }
@@ -145,7 +147,10 @@ export class RestCommerceCodec extends CommerceCodec {
 			return mapIdentifiers(ids, this.products.filter(prod => ids.includes(prod.id)))
 		} else if (args.keyword) {
 			return paginateArgs(getListPage(this.products.filter(prod => {
-				return prod.name.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1 || prod.id.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
+				const keywordMatch = prod.name.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
+				const idMatch = prod.id.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
+				const skuMatch = prod?.aliases?.skuId.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
+				return keywordMatch || idMatch || skuMatch
 			})), args)
 		} else if (args.category) {
 			return paginateArgs(getListPage([

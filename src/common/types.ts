@@ -38,6 +38,7 @@ export type Product = CommerceObject & {
 	imageSetId?: string
 	categories: Category[]
 	variants: Variant[]
+	aliases?: { skuId?: string }
 }
 
 /**
@@ -51,6 +52,7 @@ export type Variant = {
 	defaultImage?: Image
 	images: Image[]
 	attributes: Dictionary<string>
+	aliases?: { skuId?: string }
 }
 
 /**
