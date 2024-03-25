@@ -51,7 +51,7 @@ export const logResponse = <T>(method: string, request: string, response: T): T 
  * @returns Items in the order of the specified ID list
  */
 export const mapIdentifiers = <T extends {id: string | number}>(ids: (string | number)[], items: T[]): (T | null)[] => {
-	return ids.map(id => items.find(item => item && item.id == id) ?? null)
+	return ids.map(id => items.find(item => item?.sku == id || item.id == id) ?? null)
 }
 
 /**

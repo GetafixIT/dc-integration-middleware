@@ -137,14 +137,12 @@ export class RestCommerceCodec extends CommerceCodec {
 	 * @inheritdoc
 	 */
 	async getProducts(args: GetProductsArgs, raw = false): Promise<Product[]> {
-
 		await this.ensureCategoryTree()
-
 		if (args.productIds && args.productIds === '') {
 			return []
 		} else if (args.productIds) {
 			const ids = args.productIds.split(',')
-			return mapIdentifiers(ids, this.products.filter(prod => ids.includes(prod.id)))
+			return mapIdentifiers(ids, this.products.filter(prod => ids.includes(prod.id) || ids.includes(prod?.sku) ))
 		} else if (args.keyword) {
 			return paginateArgs(getListPage(this.products.filter(prod => {
 				const keywordMatch = prod.name.toLowerCase().indexOf(args.keyword.toLowerCase()) > -1
